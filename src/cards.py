@@ -1,5 +1,5 @@
 import numpy as np
-
+import random_qiskit
 
 colors = ["spades", "hearts", "clubs", "diamonds"]
 numbers = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"]
@@ -14,10 +14,21 @@ class Card:
 class Deck:
     def __init__(self, num_of_decks):
         self.num_of_decks = num_of_decks
+        self.deck = None
 
     def generate_deck(self):
         self.deck = np.empty(shape=(52 * self.num_of_decks), dtype=Card)
-        pass
+
+        for i in range(self.num_of_decks):
+            for j, color in enumerate(colors):
+                for k, number in enumerate(numbers):                    
+                    self.deck[i * 52 + j * len(numbers) + k] = Card(number, color)
 
     def shuffle_deck(self):
-        pass
+        qseed = random_qiskit.quantum_generate_random(8)
+        np.random.seed(int(qseed, 2))
+        np.random.shuffle(self.deck)
+
+    def show_deck(self):
+        for i, card in enumerate(self.deck):
+            print(f"{i}: {card.color} {card.number}")
