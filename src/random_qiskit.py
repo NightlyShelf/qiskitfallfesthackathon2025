@@ -3,9 +3,9 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit_aer import AerSimulator
 
 
-
-class RandomQuantumGenerator():
+class RandomQuantumGenerator:
     def __init__(self, num_qubits):
+        self.simulator = AerSimulator()
         self.num_qubits = num_qubits
         self.qr = QuantumRegister(num_qubits)
         self.cr = ClassicalRegister(num_qubits)
@@ -14,23 +14,21 @@ class RandomQuantumGenerator():
         # TODO try just to self.circuit.h(self.qr)
         for i in range(self.num_qubits):
             self.circuit.h(i)
-        self.circuit.measure_all()
+        self.circuit.measure(self.qr, self.cr)
+        compiled_circuit = self.simulator.run(self.circuit, shots=1)
+        result = compiled_circuit.result()
+        counts = result.get_counts(self.circuit)
+        # Get the single measurement result (bit string)
+        bitstring = list(counts.keys())[0]
+        return bitstring  # Returns string like '0101' or '1110'
 
+    def generate_int(self):
+        """Returns the random bits as an integer"""
+        return int(self.generate(), 2)
 
+    def generate_list(self):
+        """Returns the random bits as a list of integers [0, 1, 0, 1]"""
+        return [int(bit) for bit in self.generate()]
 
-
-#n = 12
-
-#qc = QuantumCircuit(n, n)
-
-#for i in range(n):
- #   qc.h(i)
-
-#qc.measure(np.arange(n), np.arange(n))
-
-#qc.draw('mpl')
-
-#simulator = AerSimulator()
-#job = simulator.run(qc, shots=1)
-## plot_histogram(job.result().get_counts())
-#print(int(list(job.result().get_counts().keys())[0],2))
+rqg = RandomQuantumGenerator(4)
+print(rqg.generate_int())
