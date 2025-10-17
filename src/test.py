@@ -14,5 +14,5 @@ import random_qiskit
 # print(my_deck.next_card())
 # print(my_deck.next_card())
 
-for _ in range(100):
-    random_qiskit.quantum_generate_random_device_independent()
+for _ in range(10):
+    print(int(random_qiskit.quantum_generate_random_device_independent(),2))

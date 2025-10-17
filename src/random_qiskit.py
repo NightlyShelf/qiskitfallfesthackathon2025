@@ -22,8 +22,6 @@ def quantum_generate_random(bit_count = 8):
 
     return list(job.result().get_counts().keys())[0]
 
-a_choices = [0, np.pi / 2]
-b_choices = [np.pi / 4, 3 * np.pi / 4]
 
 
 def measuring_in_basis(qc, qubit, basis):
@@ -84,6 +82,9 @@ def quantum_generate_random_device_independent(bit_count = 8, rounds = 1000):
 
     print('S', S)
 
+    final_string = ""
+
     for _ in range(bit_count):
 
-        print(results[np.random.randint(0, len(results))]['outcome'][0])
+        final_string += results[np.random.randint(0, len(results))]['outcome'][0]
+    return final_string
