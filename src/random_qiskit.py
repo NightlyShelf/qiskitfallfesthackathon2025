@@ -78,7 +78,7 @@ def quantum_generate_random_device_independent(bit_count = 8, rounds = 1000):
                 corr = np.mean([val_in_basis(result['outcome'][0]) * val_in_basis(result['outcome'][1]) for result in subset])
                 E[(a, b)] = corr
 
-    S = E[('X','X')] + E[('X','Z')] + E[('Z','X')] - E[('Z','Z')]
+    S = E[('X','X')] - E[('X','Z')] + E[('Z','X')] + E[('Z','Z')]
 
     print('S', S)
 
