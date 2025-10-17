@@ -11,7 +11,7 @@ class RandomQuantumGenerator():
         self.cr = ClassicalRegister(num_qubits)
         self.circuit = QuantumCircuit(self.qr, self.cr)
     def generate(self):
-        # TODO try just self.circuit.h(self.qr)
+        # TODO try just to self.circuit.h(self.qr)
         for i in range(self.num_qubits):
             self.circuit.h(i)
         self.circuit.measure_all()
