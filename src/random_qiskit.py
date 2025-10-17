@@ -3,6 +3,11 @@ from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 
 def quantum_generate_random(bit_count = 8):
+    '''
+    generated truly random number
+    Args:
+        - bit length of random number
+    '''
     qc = QuantumCircuit(bit_count, bit_count)
 
     for i in range(bit_count):
