@@ -2,18 +2,19 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 
-n = 12
 
-qc = QuantumCircuit(n, n)
 
-for i in range(n):
-    qc.h(i)
+def quantum_generate_random(bit_count = 8):
+    qc = QuantumCircuit(bit_count, bit_count)
 
-qc.measure(np.arange(n), np.arange(n))
+    for i in range(bit_count):
+        qc.h(i)
 
-qc.draw('mpl')
+    qc.measure(np.arange(bit_count), np.arange(bit_count))
 
-simulator = AerSimulator()
-job = simulator.run(qc, shots=1)
-# plot_histogram(job.result().get_counts())
-print(int(list(job.result().get_counts().keys())[0],2))
+    qc.draw('mpl')
+
+    simulator = AerSimulator()
+    job = simulator.run(qc, shots=1)
+
+    return list(job.result().get_counts().keys())[0]
