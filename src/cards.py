@@ -26,7 +26,7 @@ class Deck:
             Deck object
         '''
         self.num_of_decks = num_of_decks
-        self.c = security_bit_count
+        self.security_bit_count = security_bit_count
         self.deck = None
         self.current_card = 0
 
