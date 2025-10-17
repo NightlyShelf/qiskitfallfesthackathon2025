@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit_aer import AerSimulator
@@ -16,6 +18,8 @@ class RandomQuantumGenerator:
         compiled_circuit = self.simulator.run(self.circuit, shots=1)
         result = compiled_circuit.result()
         counts = result.get_counts(self.circuit)
+        if not self._certify_randomness(counts):
+            raise Exception('Cant certify randomness. CORRPUTED!!!')
         # Get the single measurement result (bit string)
         bitstring = list(counts.keys())[0]
         return bitstring  # Returns string like '0101' or '1110'
@@ -24,9 +28,7 @@ class RandomQuantumGenerator:
         """Returns the random bits as an integer"""
         return int(self.generate(), 2)
 
-    def generate_list(self):
-        """Returns the random bits as a list of integers [0, 1, 0, 1]"""
-        return [int(bit) for bit in self.generate()]
-
-rqg = RandomQuantumGenerator(4)
-print(rqg.generate_int())
+    def _certify_randomness(self, counts: Any) -> bool:
+        # TODO
+        # https://quantum.cloud.ibm.com/docs/en/tutorials/chsh-inequality
+        return True
