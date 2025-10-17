@@ -1,4 +1,5 @@
-# Qiskit Fall Fest 2025 Hackathon Project
+# Qiskit Fall Fest 2025 Hackathon Project - Quantum Casino
 
 ---
- Project by team Qwontie
+
+Project by team Qwontie
