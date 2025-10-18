@@ -47,7 +47,7 @@ class Deck:
         '''
         self.current_card = 0
 
-        self.qseed = int(random_qiskit.quantum_generate_random(bit_count=self.security_bit_count), 2)
+        self.qseed = int(random_qiskit.quantum_generate_random_device_independent(bit_count=self.security_bit_count), 2)
         np.random.seed(self.qseed)
         np.random.shuffle(self.deck)
 
