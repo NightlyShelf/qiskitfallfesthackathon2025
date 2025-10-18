@@ -1,32 +1,90 @@
 import numpy as np
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 
+def quantum_generate_random(bit_count = 8):
+    '''
+    generated truly random number
+    Args:
+        - bit length of random number
+    '''
+    qc = QuantumCircuit(bit_count, bit_count)
 
-class RandomQuantumGenerator:
-    def __init__(self, num_qubits):
-        self.simulator = AerSimulator()
-        self.num_qubits = num_qubits
-        self.qr = QuantumRegister(num_qubits)
-        self.cr = ClassicalRegister(num_qubits)
-        self.circuit = QuantumCircuit(self.qr, self.cr)
-    def generate(self):
-        self.circuit.h(self.qr)
-        self.circuit.measure(self.qr, self.cr)
-        compiled_circuit = self.simulator.run(self.circuit, shots=1)
-        result = compiled_circuit.result()
-        counts = result.get_counts(self.circuit)
-        # Get the single measurement result (bit string)
-        bitstring = list(counts.keys())[0]
-        return bitstring  # Returns string like '0101' or '1110'
+    for i in range(bit_count):
+        qc.h(i)
 
-    def generate_int(self):
-        """Returns the random bits as an integer"""
-        return int(self.generate(), 2)
+    qc.measure(np.arange(bit_count), np.arange(bit_count))
 
-    def generate_list(self):
-        """Returns the random bits as a list of integers [0, 1, 0, 1]"""
-        return [int(bit) for bit in self.generate()]
+    qc.draw('mpl')
 
-rqg = RandomQuantumGenerator(4)
-print(rqg.generate_int())
+    simulator = AerSimulator()
+    job = simulator.run(qc, shots=1)
+
+    return list(job.result().get_counts().keys())[0]
+
+
+
+def measuring_in_basis(qc, qubit, basis):
+    if basis == 'Z':
+        pass
+    if basis == 'X':
+        qc.h(qubit)
+
+def val_in_basis(bit):
+    if bit == '0':
+        return 1
+    else:
+        return -1
+
+def quantum_generate_random_device_independent(bit_count = 8, rounds = 1000):
+    
+
+    results = []
+
+    for _ in range(rounds):
+        simulator = AerSimulator()
+
+        qc = QuantumCircuit(2,2)
+
+        qc.h(0)
+        qc.cx(0,1)
+
+        a_basis = np.random.choice(['X', 'Z'])
+        b_basis = np.random.choice(['X', 'Z'])
+
+        measuring_in_basis(qc, 0, a_basis)
+        measuring_in_basis(qc, 1, b_basis)
+
+        qc.measure([0, 1], [0, 1])
+
+        job = simulator.run(qc, shots=1)
+        counts = job.result().get_counts()
+        outcome = list(counts.keys())[0]
+
+        results.append({
+            'a_basis': a_basis,
+            'b_basis': b_basis,
+            'outcome': outcome
+        })
+
+    E = {}
+
+    for a in ['X', 'Z']:
+        for b in ['X', 'Z']:
+            subset = [result for result in results if result['a_basis'] == a and result['b_basis'] == b]
+            if len(subset) == 0:
+                E[(a, b)] = 0
+            else:
+                corr = np.mean([val_in_basis(result['outcome'][0]) * val_in_basis(result['outcome'][1]) for result in subset])
+                E[(a, b)] = corr
+
+    S = E[('X','X')] - E[('X','Z')] + E[('Z','X')] + E[('Z','Z')]
+
+    print('S', S)
+
+    final_string = ""
+
+    for _ in range(bit_count):
+
+        final_string += results[np.random.randint(0, len(results))]['outcome'][0]
+    return final_string
